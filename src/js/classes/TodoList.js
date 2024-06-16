@@ -17,7 +17,13 @@ class TodoList {
 
   /** creates new todoItem instance, sets events and adds it to the todos list */
   addTodo(title) {
-    // TODO: Implement the logic to add a new todo item to the list
+    
+    if(!title.trim()) {
+      return
+    }
+
+    const todoItem = new TodoItem(title, { template: this.template });
+    this.todos.push(todoItem);
   }
 
   /** toggles todo item status based on given id */

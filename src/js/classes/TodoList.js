@@ -28,12 +28,22 @@ class TodoList {
       this.deleteTodo(id);
     });
 
+    todoItem.on("toggle", (id) => {
+      this.toggleTodoStatus(id);
+    });
+
     this.todos.push(todoItem);
   }
 
   /** toggles todo item status based on given id */
   toggleTodoStatus(id) {
-    // TODO: Implement the logic to toggle the status of a todo item
+    let todoItem = this.todos.find(todo => todo.id === id)
+    if (todoItem) {
+      todoItem.status = todoItem.status === this.statuses.ACTIVE 
+        ? this.statuses.COMPLETED 
+        : this.statuses.ACTIVE;
+      this._renderAll();
+    }
   }
 
   /** deletes todo item based on given id */
@@ -42,7 +52,6 @@ class TodoList {
     if (index !== -1) {
       this.todos.splice(index, 1); // Remove o item da lista observada
     }
-    // TODO: Implement the logic to delete a todo item from the list
   }
 
   /** Sets todoItem template html */

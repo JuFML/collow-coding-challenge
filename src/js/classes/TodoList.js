@@ -23,6 +23,11 @@ class TodoList {
     }
 
     const todoItem = new TodoItem(title, { template: this.template });
+
+    todoItem.on("delete", (id) => {
+      this.deleteTodo(id);
+    });
+
     this.todos.push(todoItem);
   }
 
@@ -33,6 +38,10 @@ class TodoList {
 
   /** deletes todo item based on given id */
   deleteTodo(id) {
+    const index = this.todos.findIndex(todo => todo.id === id);
+    if (index !== -1) {
+      this.todos.splice(index, 1); // Remove o item da lista observada
+    }
     // TODO: Implement the logic to delete a todo item from the list
   }
 

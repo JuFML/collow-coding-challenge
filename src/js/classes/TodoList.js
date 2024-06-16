@@ -13,6 +13,8 @@ class TodoList {
     this._setTodoTemplate();
     this.todos = createDeepObserver([], this._renderAll.bind(this));
     this._assignFormEventListeners();
+    this._loadTodosFromLocalStorage(); 
+    this._assignFormEventListeners();
   }
 
   /** creates new todoItem instance, sets events and adds it to the todos list */
@@ -33,6 +35,7 @@ class TodoList {
     });
 
     this.todos.push(todoItem);
+    this._saveTodosToLocalStorage()
   }
 
   /** toggles todo item status based on given id */
@@ -44,6 +47,7 @@ class TodoList {
         : this.statuses.ACTIVE;
       this._renderAll();
     }
+    this._saveTodosToLocalStorage()
   }
 
   /** deletes todo item based on given id */
@@ -52,6 +56,38 @@ class TodoList {
     if (index !== -1) {
       this.todos.splice(index, 1); // Remove o item da lista observada
     }
+    this._saveTodosToLocalStorage()
+  }
+
+   /** Loads todos from localStorage */
+   _loadTodosFromLocalStorage() {
+    const savedTodos = JSON.parse(localStorage.getItem('todos')) || [];
+    savedTodos.forEach(savedTodo => {
+      const todoItem = new TodoItem(savedTodo.title, { template: this.template });
+      todoItem.id = savedTodo.id;
+      todoItem.status = savedTodo.status;
+
+      todoItem.on("delete", (id) => {
+        this.deleteTodo(id);
+      });
+
+      todoItem.on("toggle", (id) => {
+        this.toggleTodoStatus(id);
+      });
+
+      this.todos.push(todoItem);
+    });
+    this._renderAll();
+  }
+
+  /** Saves todos to localStorage */
+  _saveTodosToLocalStorage() {
+    const todosToSave = this.todos.map(todo => ({
+      id: todo.id,
+      title: todo.title,
+      status: todo.status
+    }));
+    localStorage.setItem('todos', JSON.stringify(todosToSave));
   }
 
   /** Sets todoItem template html */

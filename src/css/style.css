@@ -75,6 +75,12 @@ ul > .title {
   margin-bottom: 1rem;
 }
 
+.list-container {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
 input[type="checkbox"] {
   cursor: pointer;
 }
@@ -114,8 +120,8 @@ input[type="checkbox"] {
 }
 
 .toggle-checkbox {
-  width: 17px;
-  height: 17px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -143,4 +149,42 @@ input[type="checkbox"] {
 
 #todo-item-template {
   display: none;
+}
+
+@media (max-width: 990px) {
+  .container {    
+    max-width: 75vw;
+  }
+}
+
+@media (max-width: 550px) {
+  .container {    
+    max-width: 100vw;
+  }
+}
+
+@media (max-width: 425px) {
+  #form > .action-row {    
+    display: flex;
+    margin-left: 0;
+    gap: .5rem;
+  }
+
+  button {
+    padding: 0.5rem 0rem;
+  }
+
+  #add_button,
+  #generate_button {
+    flex: 1;
+  }
+
+  #active-list,
+  #completed-list {
+    padding: .5rem;
+  }
+
+  .todo-item {
+    padding: 0.5rem 0.5rem;
+  }
 }

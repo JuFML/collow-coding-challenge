@@ -99,6 +99,14 @@ class TodoList {
     addButton.addEventListener('click', addTodoHandler);
     
     // TODO: When the "Generate" button is clicked, fetch a random task and add it to the input field
+    const generateButton = document.getElementById('generate_button');
+    generateButton.addEventListener('click', async () => {
+      generateButton.disabled = true;
+      const response = await fetch('https://dummyjson.com/todos/random');
+      const data = await response.json();
+      input.value = data.todo;
+      generateButton.disabled = false
+    });
   }
 }
 

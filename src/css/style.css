@@ -104,6 +104,16 @@ input[type="checkbox"] {
   border: solid 1px #3e3b46;
   border-radius: 0.25rem;
   background-color: #2f2d35;
+  flex-wrap: wrap;
+}
+
+
+.todo-item > .title {
+  flex: 1;
+}
+
+.todo-item input {
+  width: 95%;
 }
 
 #completed-list > .todo-item {
@@ -113,6 +123,7 @@ input[type="checkbox"] {
 #completed-list .todo-item > .title {
   text-decoration: line-through;
   color: #9091a1;
+  flex: 1;
 }
 
 #todo-input {

@@ -34,6 +34,10 @@ class TodoList {
       this.toggleTodoStatus(id);
     });
 
+    todoItem.on("dblclick", ({id, title}) => {
+      this.editTodo({id, title});
+    });
+
     this.todos.push(todoItem);
     this._saveTodosToLocalStorage()
   }
@@ -46,16 +50,69 @@ class TodoList {
         ? this.statuses.COMPLETED 
         : this.statuses.ACTIVE;
       this._renderAll();
-    }
-    this._saveTodosToLocalStorage()
+      this._saveTodosToLocalStorage()
+    }    
   }
 
   /** deletes todo item based on given id */
   deleteTodo(id) {
     const index = this.todos.findIndex(todo => todo.id === id);
     if (index !== -1) {
-      this.todos.splice(index, 1); // Remove o item da lista observada
+      this.todos.splice(index, 1);
+      this._saveTodosToLocalStorage()
     }
+  }
+
+  /** edit todo item based on given id */
+  editTodo({id, title}) {
+    let todoItem = this.todos.find(todo => todo.id === id)
+    this._makeTodoItemEditable(todoItem)
+    if (todoItem) {
+      todoItem.title = title
+      this._renderAll();
+      this._saveTodosToLocalStorage()
+    }    
+  }
+
+  _makeTodoItemEditable(todoItem) {
+    if (todoItem) {     
+        let todoItemHTML = todoItem.element;
+        console.log(todoItemHTML)
+        let titleElement = todoItemHTML.querySelector('.title');
+        console.log(titleElement)
+
+        let input = document.createElement('input');
+        input.type = 'text';
+        input.value = todoItem.title;
+
+        titleElement.innerText = "";
+        titleElement.appendChild(input);
+        // titleElement.querySelector('input').focus()
+
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+              this._saveEditedTodoItem(todoItem, input.value);
+          }
+        });
+
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+              this._saveEditedTodoItem(todoItem, input.value);
+          }
+        });
+
+        input.addEventListener('blur', () => {
+            this._saveEditedTodoItem(todoItem, input.value);
+        });
+    }
+  }
+
+  _saveEditedTodoItem(todoItem, newTitle) {
+    todoItem.title = newTitle;
+    let todoItemHTML = todoItem.element;
+    let titleElement = todoItemHTML.querySelector('.title');
+    titleElement.innerText = newTitle
+    
     this._saveTodosToLocalStorage()
   }
 
@@ -75,6 +132,10 @@ class TodoList {
         this.toggleTodoStatus(id);
       });
 
+      todoItem.on("dblclick", ({id, title}) => {
+        this.editTodo({id, title});
+      });
+
       this.todos.push(todoItem);
     });
     this._renderAll();
@@ -82,11 +143,7 @@ class TodoList {
 
   /** Saves todos to localStorage */
   _saveTodosToLocalStorage() {
-    const todosToSave = this.todos.map(todo => ({
-      id: todo.id,
-      title: todo.title,
-      status: todo.status
-    }));
+    const todosToSave = [...this.todos]
     localStorage.setItem('todos', JSON.stringify(todosToSave));
   }
 

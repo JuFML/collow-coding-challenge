@@ -34,8 +34,8 @@ class TodoList {
       this.toggleTodoStatus(id);
     });
 
-    todoItem.on("dblclick", ({id, title}) => {
-      this.editTodo({id, title});
+    todoItem.on("edit", ({id, title}) => {
+      this.editTodo(id, title);
     });
 
     this.todos.push(todoItem);
@@ -64,7 +64,7 @@ class TodoList {
   }
 
   /** edit todo item based on given id */
-  editTodo({id, title}) {
+  editTodo(id, title) {
     let todoItem = this.todos.find(todo => todo.id === id)
     this._makeTodoItemEditable(todoItem)
     if (todoItem) {
@@ -77,9 +77,7 @@ class TodoList {
   _makeTodoItemEditable(todoItem) {
     if (todoItem) {     
         let todoItemHTML = todoItem.element;
-        console.log(todoItemHTML)
         let titleElement = todoItemHTML.querySelector('.title');
-        console.log(titleElement)
 
         let input = document.createElement('input');
         input.type = 'text';
@@ -132,8 +130,8 @@ class TodoList {
         this.toggleTodoStatus(id);
       });
 
-      todoItem.on("dblclick", ({id, title}) => {
-        this.editTodo({id, title});
+      todoItem.on("edit", ({id, title}) => {
+        this.editTodo(id, title);
       });
 
       this.todos.push(todoItem);

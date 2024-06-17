@@ -28,7 +28,7 @@ class TodoItem extends EventClass {
   _createTodoElement() {
     this.element.querySelector('.title').innerText = this.title;
     this.element.querySelector('.title')
-      .addEventListener('dblclick', () => this.emit("dblclick", {id: this.id, title: this.title}))
+      .addEventListener('dblclick', () => this.emit("edit", {id: this.id, title: this.title}))
     this.element.querySelector('button.delete')
       .addEventListener('click', () => this.emit("delete", this.id));
     this.element.querySelector('.toggle-checkbox')

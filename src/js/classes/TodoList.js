@@ -74,6 +74,14 @@ class TodoList {
     }    
   }
 
+  /** filters the list of todos based on the search value and renders the filtered results */
+  searchTodo(searchValue) {
+    const todos = this.todos.filter(todo => todo.title.toLowerCase().includes(searchValue))
+
+    this._renderFiltered(todos);
+  }
+
+  /** makes a todo item editable by replacing its title with an input field. */ 
   _makeTodoItemEditable(todoItem) {
     if (todoItem) {     
         let todoItemHTML = todoItem.element;
@@ -85,7 +93,6 @@ class TodoList {
 
         titleElement.innerText = "";
         titleElement.appendChild(input);
-        // titleElement.querySelector('input').focus()
 
         input.addEventListener('keydown', (e) => {
           if (e.key === 'Escape') {
@@ -105,6 +112,7 @@ class TodoList {
     }
   }
 
+  /** saves the edited title of a todo item and updates the display. */
   _saveEditedTodoItem(todoItem, newTitle) {
     todoItem.title = newTitle;
     let todoItemHTML = todoItem.element;
@@ -170,6 +178,15 @@ class TodoList {
     });
   }
 
+  /** renders all todos filtered */
+  _renderFiltered(todos) {
+    Object.values(this.statuses).forEach(status => {
+      const filteredTodos = todos.filter(todo => todo.status === status);
+      const statusElement = document.querySelector(`#${status}-list .list-container`);
+      this._render(statusElement, filteredTodos);
+    });
+  }
+
   /** assigns event listeners to form elements */
   _assignFormEventListeners() {
     const addTodoHandler = () => {
@@ -177,9 +194,14 @@ class TodoList {
       input.value = '';
     };
 
+    const addSearchHandler = () => {
+      this.searchTodo(inputSearch.value)
+    }
+
     // Find required elements
     const input = document.getElementById('todo-input');
     const addButton = document.getElementById('add_button');
+    const inputSearch = document.getElementById('search-input');
 
     // Add event listeners to input field
     input.addEventListener('keydown', (e) => {
@@ -187,7 +209,9 @@ class TodoList {
         addTodoHandler();
       }
     });
+
     addButton.addEventListener('click', addTodoHandler);
+    inputSearch.addEventListener('input', addSearchHandler)
     
     // TODO: When the "Generate" button is clicked, fetch a random task and add it to the input field
     const generateButton = document.getElementById('generate_button');

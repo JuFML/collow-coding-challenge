@@ -15,6 +15,7 @@ class TodoList {
     this._assignFormEventListeners();
     this._loadTodosFromLocalStorage(); 
     this._assignFormEventListeners();
+    this._assignDragEventListeners();
   }
 
   /** creates new todoItem instance, sets events and adds it to the todos list */
@@ -36,6 +37,14 @@ class TodoList {
 
     todoItem.on("edit", ({id, title}) => {
       this.editTodo(id, title);
+    });
+
+    todoItem.on("dragstart", (id) => {
+      this.dragStart(id)
+    });
+
+    todoItem.on("dragend", (id) => {
+      this.dragEnd(id)
     });
 
     this.todos.push(todoItem);
@@ -79,6 +88,66 @@ class TodoList {
     const todos = this.todos.filter(todo => todo.title.toLowerCase().includes(searchValue))
 
     this._renderFiltered(todos);
+  }
+
+  /** Initiates the drag operation for a todo item. */
+  dragStart(id) {
+    let todoItem = this.todos.find(todo => todo.id === id)
+
+    todoItem.element.setAttribute('data-transfer', id);
+    setTimeout(() => {
+      todoItem.element.classList.add('hide');
+    }, 0);
+  }
+
+  /** Ends the drag operation for a todo item. */
+  dragEnd(id) {
+    let todoItem = this.todos.find(todo => todo.id === id)
+    todoItem.element.classList.remove('hide');
+    // setTimeout(() => {
+    //   todoItem.element.classList.remove('hide');
+    // }, 0);
+  }
+
+  /** Prevents the default behavior for the dragover event. */
+  dragOver(e) {
+    e.preventDefault();
+  }
+
+  /** Handles the dragenter event when a dragged item enters a dropzone. */
+  dragEnter(e) {
+    e.preventDefault();
+    if(Array.from(e.target.classList).includes("dropzone")){
+      e.target.classList.add('drag-over');
+    }
+  }
+
+  /** Handles the dragleave event when a dragged item leaves a dropzone. */
+  dragLeave(e) {
+    e.target.classList.remove('drag-over');
+  }
+
+  /** Handles the drop event when a dragged item is dropped onto a dropzone. */
+  drop(e) {
+    e.preventDefault();
+    const dragItem = document.querySelector("[data-transfer]");
+    const id = dragItem.getAttribute('data-transfer');
+
+    e.target.classList.remove('drag-over');
+
+    if (e.target.classList.contains('dropzone')) {
+      document.querySelectorAll(".list-container").forEach(list => list.innerHTML="")
+      let todoItem = this.todos.find(todo => todo.id === id)
+      let todoItemStatus = todoItem.status
+      let dropzoneId = e.target.id
+      dragItem.removeAttribute('data-transfer');
+      
+      if(todoItemStatus !== dropzoneId.split('-')[0]) {
+        this.toggleTodoStatus(id)
+      } else {
+        this._renderAll()
+      }
+    }    
   }
 
   /** makes a todo item editable by replacing its title with an input field. */ 
@@ -125,6 +194,7 @@ class TodoList {
    /** Loads todos from localStorage */
    _loadTodosFromLocalStorage() {
     const savedTodos = JSON.parse(localStorage.getItem('todos')) || [];
+    
     savedTodos.forEach(savedTodo => {
       const todoItem = new TodoItem(savedTodo.title, { template: this.template });
       todoItem.id = savedTodo.id;
@@ -142,8 +212,17 @@ class TodoList {
         this.editTodo(id, title);
       });
 
+      todoItem.on("dragstart", (id) => {
+        this.dragStart(id)
+      });
+
+      todoItem.on("dragend", (id) => {
+        this.dragEnd(id)
+      });
+
       this.todos.push(todoItem);
     });
+
     this._renderAll();
   }
 
@@ -184,6 +263,18 @@ class TodoList {
       const filteredTodos = todos.filter(todo => todo.status === status);
       const statusElement = document.querySelector(`#${status}-list .list-container`);
       this._render(statusElement, filteredTodos);
+    });
+  }
+
+  /** assigns event listeners to drag elements and drag zones*/
+  _assignDragEventListeners() {
+    const dropzones = document.querySelectorAll('.dropzone');
+
+    dropzones.forEach(dropzone => {
+      dropzone.addEventListener('dragover', this.dragOver);
+      dropzone.addEventListener('dragenter', this.dragEnter);
+      dropzone.addEventListener('dragleave', this.dragLeave);
+      dropzone.addEventListener('drop', this.drop.bind(this));
     });
   }
 

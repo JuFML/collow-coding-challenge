@@ -28,12 +28,12 @@
         </div>
       </div>
       <input type="text" id="search-input" placeholder="Search a task" />
-      <ul id="active-list">
+      <ul id="active-list" class="dropzone">
         <div class="title">
           Tasks
         </div>
         <div class="list-container">
-          <li class="todo-item" id="todo-item-template">
+          <li class="todo-item" draggable="true" id="todo-item-template">
             <div class="toggle-checkbox">
               <i class="fa-solid fa-check"></i>
             </div>
@@ -44,7 +44,7 @@
           </li>
         </div>
       </ul>
-      <ul id="completed-list">
+      <ul id="completed-list" class="dropzone">
         <div class="title">
           Complete Tasks
         </div>

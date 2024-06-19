@@ -162,6 +162,14 @@ input[type="checkbox"] {
   display: none;
 }
 
+.hide {
+  display: none;
+}
+
+.drag-over {
+  border: 1px solid #6e26ee;
+}
+
 @media (max-width: 990px) {
   .container {    
     max-width: 75vw;

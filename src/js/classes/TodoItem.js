@@ -33,6 +33,8 @@ class TodoItem extends EventClass {
       .addEventListener('click', () => this.emit("delete", this.id));
     this.element.querySelector('.toggle-checkbox')
       .addEventListener('click', () => this.emit("toggle", this.id));
+    this.element.addEventListener('dragstart', () => this.emit("dragstart", this.id));
+    this.element.addEventListener('dragend', () => this.emit("dragend", this.id));
 
     return this.element;
   }
